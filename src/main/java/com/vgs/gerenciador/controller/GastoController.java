@@ -10,11 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vgs.gerenciador.DTO.DashboardDTO;
 import com.vgs.gerenciador.DTO.GastoDTO;
 import com.vgs.gerenciador.service.GastoService;
 
 @RestController
-@RequestMapping(value = "/gasto")
+@RequestMapping(value = "/gastos")
 public class GastoController {
 	
 	@Autowired
@@ -31,8 +32,13 @@ public class GastoController {
 	}
 	
 	@PutMapping
-	public GastoDTO alterar(GastoDTO gastoDto) {
+	public GastoDTO alterar(@RequestBody GastoDTO gastoDto) {
 		return gasto.update(gastoDto);
 	}
+	
+	@GetMapping("/resumo") 
+    public DashboardDTO getResumo() {
+        return gasto.getResumoDashboard();
+    }
 
 }

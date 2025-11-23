@@ -1,6 +1,9 @@
 package com.vgs.gerenciador.service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
 import com.vgs.gerenciador.entity.GastoEntity;
+import com.vgs.gerenciador.enums.Tipo;
+import com.vgs.gerenciador.DTO.DashboardDTO;
 import com.vgs.gerenciador.DTO.GastoDTO;
 import com.vgs.gerenciador.repository.GastoRepository;
 
@@ -36,6 +41,49 @@ public class GastoService {
 		GastoEntity gasto = new GastoEntity(gastoDTO);
 		return new GastoDTO(gastoRespository.save(gasto));
 	}
+	
+	
+	//para o dashboard da API
+	
+	
+	public DashboardDTO getResumoDashboard() {
+    
+        List<GastoDTO> todosGastos = listarTodos(); 
+        
+        BigDecimal totalEntradas = BigDecimal.ZERO;
+        BigDecimal totalSaidas = BigDecimal.ZERO;
+    
+
+        Map<String, BigDecimal> gastosPorCategoria = new java.util.HashMap<>();
+
+
+        for (GastoDTO gasto : todosGastos) {
+            if (gasto.getTipo() == Tipo.ENTRADA) { 
+        
+                totalEntradas = totalEntradas.add(gasto.getValor());
+            } else if (gasto.getTipo() == Tipo.SAIDA) {
+                
+                totalSaidas = totalSaidas.add(gasto.getValor());
+
+                String categoriaDescricao = gasto.getCategoria() != null 
+                                            ? gasto.getCategoria().getDescricao() 
+                                            : "Sem Categoria";
+                
+                BigDecimal gastoAtual = gastosPorCategoria.getOrDefault(categoriaDescricao, BigDecimal.ZERO);
+
+                gastosPorCategoria.put(categoriaDescricao, gastoAtual.add(gasto.getValor()));
+            }
+        }
+        
+ 
+
+        String maiorGastoCategoria = gastosPorCategoria.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse("Nenhuma Saída Registrada");
+
+        return new DashboardDTO(totalEntradas, totalSaidas, maiorGastoCategoria);
+    }
 	
 	
 	

@@ -1,5 +1,6 @@
 package com.vgs.gerenciador.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -7,11 +8,15 @@ import org.springframework.beans.BeanUtils;
 
 import com.vgs.gerenciador.DTO.GastoDTO;
 import com.vgs.gerenciador.entity.CategoriaEntity;
+import com.vgs.gerenciador.enums.FormaPagamento;
+import com.vgs.gerenciador.enums.Tipo;
 
 import jakarta.annotation.Generated;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,13 +34,21 @@ public class GastoEntity {
 	private Long id;
 	
 	@Column(nullable = false)
-	private Double valor;
+	private BigDecimal valor;
 	
 	@Column(nullable = false)
 	private String descricao;
 	
 	@Column(nullable = false)
 	private LocalDate data;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private Tipo tipo;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private FormaPagamento forma;
 	
 	@ManyToOne
 	private CategoriaEntity categoria;
@@ -61,11 +74,11 @@ public class GastoEntity {
 		this.id = id;
 	}
 
-	public Double getValor() {
+	public BigDecimal getValor() {
 		return valor;
 	}
 
-	public void setValor(Double valor) {
+	public void setValor(BigDecimal valor) {
 		this.valor = valor;
 	}
 
@@ -91,10 +104,29 @@ public class GastoEntity {
 	public void setCategoria(CategoriaEntity categoria) {
 		this.categoria = categoria;
 	}
+	
+	
+
+	public FormaPagamento getForma() {
+		return forma;
+	}
+
+	public void setForma(FormaPagamento forma) {
+		this.forma = forma;
+	}
+
+	public Tipo getTipo() { 
+	    return tipo;
+	}
+	
+
+	public void setTipo(Tipo tipo) {
+		this.tipo = tipo;
+	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(categoria, data, descricao, id, valor);
+		return Objects.hash(categoria, data, descricao, forma, id, tipo, valor);
 	}
 
 	@Override
@@ -107,10 +139,11 @@ public class GastoEntity {
 			return false;
 		GastoEntity other = (GastoEntity) obj;
 		return Objects.equals(categoria, other.categoria) && Objects.equals(data, other.data)
-				&& Objects.equals(descricao, other.descricao) && Objects.equals(id, other.id)
-				&& Objects.equals(valor, other.valor);
+				&& Objects.equals(descricao, other.descricao) && forma == other.forma && Objects.equals(id, other.id)
+				&& tipo == other.tipo && Objects.equals(valor, other.valor);
 	}
-	
+
+
 	
 
 	
