@@ -1,12 +1,14 @@
 package com.vgs.gerenciador.DTO;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class DashboardDTO {
     
    
     private BigDecimal totalEntradas;
     private BigDecimal totalSaidas;
+    private List<BigDecimal> totaisPorMes;
     private BigDecimal diferenca;
     private String maiorGastoCategoria;
 
@@ -16,10 +18,11 @@ public class DashboardDTO {
     }
 
   
-    public DashboardDTO(BigDecimal totalEntradas, BigDecimal totalSaidas, String maiorGastoCategoria) {
+    public DashboardDTO(BigDecimal totalEntradas, BigDecimal totalSaidas, String maiorGastoCategoria, List<BigDecimal> totaisPorMes) {
         this.totalEntradas = totalEntradas;
         this.totalSaidas = totalSaidas;
         this.maiorGastoCategoria = maiorGastoCategoria;
+        this.totaisPorMes = totaisPorMes;
     }
 
     // 3. Getters
@@ -36,7 +39,18 @@ public class DashboardDTO {
         return maiorGastoCategoria;
     }
     
-    public BigDecimal getDiferenca() {
+    
+    
+    public List<BigDecimal> getTotaisPorMes() {
+        return totaisPorMes;
+    }
+
+
+    public void setTotaisPorMes(List<BigDecimal> totaisPorMes) {
+        this.totaisPorMes = totaisPorMes;
+    }
+
+	public BigDecimal getDiferenca() {
     	return diferenca;
     }
 

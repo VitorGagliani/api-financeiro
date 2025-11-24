@@ -1,6 +1,10 @@
 package com.vgs.gerenciador.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -52,6 +56,9 @@ public class GastoService {
         
         BigDecimal totalEntradas = BigDecimal.ZERO;
         BigDecimal totalSaidas = BigDecimal.ZERO;
+        LocalDate data = null;
+        int[] mesesValidos = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+      
     
 
         Map<String, BigDecimal> gastosPorCategoria = new java.util.HashMap<>();
@@ -75,6 +82,19 @@ public class GastoService {
             }
         }
         
+        List<BigDecimal> totaisPorMes = new ArrayList<>(Collections.nCopies(12, BigDecimal.ZERO));
+
+        
+        for (int mes = 1; mes <= 12; mes++) {
+        	 final int mesFiltro = mes;
+            BigDecimal total = todosGastos.stream()
+                .filter(g -> g.getData().getMonthValue() == mesFiltro && g.getTipo() == Tipo.ENTRADA)
+                .map(GastoDTO::getValor)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+            
+            totaisPorMes.set(mes - 1, total); //menos um pq vetor ta um a frente
+        }
+        
  
 
         String maiorGastoCategoria = gastosPorCategoria.entrySet().stream()
@@ -82,7 +102,8 @@ public class GastoService {
                 .map(Map.Entry::getKey)
                 .orElse("Nenhuma Saída Registrada");
 
-        return new DashboardDTO(totalEntradas, totalSaidas, maiorGastoCategoria);
+        return new DashboardDTO(totalEntradas, totalSaidas, maiorGastoCategoria, totaisPorMes);
+
     }
 	
 	
