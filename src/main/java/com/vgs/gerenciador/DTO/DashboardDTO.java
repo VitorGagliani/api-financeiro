@@ -2,6 +2,9 @@ package com.vgs.gerenciador.DTO;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+
+import com.vgs.gerenciador.entity.CategoriaEntity;
 
 public class DashboardDTO {
     
@@ -9,7 +12,9 @@ public class DashboardDTO {
     private BigDecimal totalEntradas;
     private BigDecimal totalSaidas;
     private List<BigDecimal> totaisPorMes;
+    private List<BigDecimal> totaisPorMesSaida;
     private BigDecimal diferenca;
+    private Map<Object, BigDecimal> totalPorCategoria;
     private String maiorGastoCategoria;
 
     
@@ -18,11 +23,13 @@ public class DashboardDTO {
     }
 
   
-    public DashboardDTO(BigDecimal totalEntradas, BigDecimal totalSaidas, String maiorGastoCategoria, List<BigDecimal> totaisPorMes) {
+    public DashboardDTO(BigDecimal totalEntradas, BigDecimal totalSaidas, String maiorGastoCategoria, List<BigDecimal> totaisPorMes, List<BigDecimal> totaisPorMesSaida, Map<Object, BigDecimal> totalPorCategoria) {
         this.totalEntradas = totalEntradas;
         this.totalSaidas = totalSaidas;
         this.maiorGastoCategoria = maiorGastoCategoria;
         this.totaisPorMes = totaisPorMes;
+        this.totaisPorMesSaida = totaisPorMesSaida;
+        this.totalPorCategoria = totalPorCategoria;
     }
 
     // 3. Getters
@@ -49,14 +56,38 @@ public class DashboardDTO {
     public void setTotaisPorMes(List<BigDecimal> totaisPorMes) {
         this.totaisPorMes = totaisPorMes;
     }
+    
+    
+
+	public List<BigDecimal> getTotaisPorMesSaida() {
+		return totaisPorMesSaida;
+	}
+
+
+	public void setTotaisPorMesSaida(List<BigDecimal> totaisPorMesSaida) {
+		this.totaisPorMesSaida = totaisPorMesSaida;
+	}
+
 
 	public BigDecimal getDiferenca() {
     	return diferenca;
     }
+	
+	
 
     // 4. Setters
     
-    public void setTotalEntradas(BigDecimal totalEntradas) {
+    public Map<Object, BigDecimal> getTotalPorCategoria() {
+		return totalPorCategoria;
+	}
+
+
+	public void setTotalPorCategoria(Map<Object, BigDecimal> totalPorCategoria) {
+		this.totalPorCategoria = totalPorCategoria;
+	}
+
+
+	public void setTotalEntradas(BigDecimal totalEntradas) {
         this.totalEntradas = totalEntradas;
     }
 

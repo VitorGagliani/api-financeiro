@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vgs.gerenciador.DTO.DashboardDTO;
+import com.vgs.gerenciador.DTO.EntradaDTO;
 import com.vgs.gerenciador.DTO.GastoDTO;
 import com.vgs.gerenciador.service.GastoService;
 
@@ -40,5 +41,10 @@ public class GastoController {
     public DashboardDTO getResumo() {
         return gasto.getResumoDashboard();
     }
+	
+	@GetMapping("/entradas")
+	public EntradaDTO getEntrada() {
+		return gasto.entradasDash();
+	}
 
 }
