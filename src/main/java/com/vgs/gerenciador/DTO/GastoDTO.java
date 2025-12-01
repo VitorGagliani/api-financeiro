@@ -19,6 +19,7 @@ public class GastoDTO {
 	private LocalDate data;
 	private Tipo tipo;
 	private CategoriaEntity categoria;
+	private Long categoriaId;
 	private FormaPagamento forma;
 	
 	
@@ -31,13 +32,24 @@ public class GastoDTO {
         this.forma = gasto.getForma();
         this.tipo = gasto.getTipo(); // Tipo (Enum)
         this.categoria = gasto.getCategoria(); 
-    
+        
     }
 	
 	public GastoDTO() {
 		
 	}
 	
+	
+	
+	
+	public Long getCategoriaId() {
+		return categoriaId;
+	}
+
+	public void setCategoriaId(Long categoriaId) {
+		this.categoriaId = categoriaId;
+	}
+
 	public Long getId() {
 		return id;
 	}

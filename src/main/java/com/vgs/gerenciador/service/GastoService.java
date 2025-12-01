@@ -21,6 +21,7 @@ import com.vgs.gerenciador.enums.Tipo;
 import com.vgs.gerenciador.DTO.CategoriaDTO;
 import com.vgs.gerenciador.DTO.DashboardDTO;
 import com.vgs.gerenciador.DTO.EntradaDTO;
+import com.vgs.gerenciador.DTO.FiltraDataDTO;
 import com.vgs.gerenciador.DTO.GastoDTO;
 import com.vgs.gerenciador.repository.CategoriaRepository;
 import com.vgs.gerenciador.repository.GastoRepository;
@@ -45,16 +46,45 @@ public class GastoService {
 		return categoria.stream().map(CategoriaDTO::new).toList();
 	}
 
-	public void inserir(GastoDTO gastoDTO) {
-		GastoEntity gasto = new GastoEntity(gastoDTO);
-		gastoRespository.save(gasto);
+	public GastoDTO inserir(GastoDTO dto) {
+
+	    GastoEntity gasto = new GastoEntity();
+	    gasto.setDescricao(dto.getDescricao());
+	    gasto.setValor(dto.getValor());
+	    gasto.setData(dto.getData());
+	    gasto.setTipo(dto.getTipo());
+	    gasto.setForma(dto.getForma());
+
+	    // pegar categoria correta do banco
+	    if (dto.getCategoriaId() != null) {
+	        CategoriaEntity categoria = categoriaRepository.findById(dto.getCategoriaId())
+	                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+	        gasto.setCategoria(categoria);
+	    } else {
+	        gasto.setCategoria(null);
+	    }
+
+	    gastoRespository.save(gasto);
+
+	    return new GastoDTO(gasto);
 	}
 	
 	
 	public GastoDTO update(GastoDTO gastoDTO) {
-		GastoEntity gasto = new GastoEntity(gastoDTO);
-		return new GastoDTO(gastoRespository.save(gasto));
+
+	    GastoEntity gasto = new GastoEntity(gastoDTO);
+
+	    if (gastoDTO.getCategoriaId() != null) {
+	        CategoriaEntity categoria = categoriaRepository
+	                .findById(gastoDTO.getCategoriaId())
+	                .orElse(null);
+
+	        gasto.setCategoria(categoria);
+	    }
+
+	    return new GastoDTO(gastoRespository.save(gasto));
 	}
+
 	
 	
 	//para o dashboard da API
@@ -153,6 +183,7 @@ public class GastoService {
 		List<GastoDTO> todosGastos = listarTodos(); 
 		
 		 BigDecimal totalEntradas = BigDecimal.ZERO;
+		 List<Object> todasEntradas = new ArrayList();
 	        
 		
 		List<BigDecimal> totaisPorMes = new ArrayList<>(Collections.nCopies(12, BigDecimal.ZERO));
@@ -171,10 +202,16 @@ public class GastoService {
         }
         
         
-        //pegar todos gastos
-        for(GastoDTO gasto : todosGastos) {
-        		if(gasto.getTipo() == Tipo.ENTRADA) {
-        			totalEntradas = totalEntradas.add(gasto.getValor());
+        //pegar todas entradas valor
+        for(GastoDTO entrada : todosGastos) {
+        		if(entrada.getTipo() == Tipo.ENTRADA) {
+        			totalEntradas = totalEntradas.add(entrada.getValor());
+        		}
+        }
+        
+        for(GastoDTO entradas : todosGastos) {
+        		if(entradas.getTipo() == Tipo.ENTRADA) {
+        			todasEntradas.add(entradas);
         		}
         }
         
@@ -183,9 +220,15 @@ public class GastoService {
         .collect(Collectors.groupingBy(g -> g.getData().getMonth(), 
         		Collectors.reducing(BigDecimal.ZERO, GastoDTO::getValor, BigDecimal::add)
         		));
+        
+   
+        
+		return new EntradaDTO (totalEntradas, totaisPorMes, maiorMes,  todasEntradas);
 		
-		return new EntradaDTO (totalEntradas, totaisPorMes, maiorMes);
 	}
+	
+	
+
 	
 	
 	

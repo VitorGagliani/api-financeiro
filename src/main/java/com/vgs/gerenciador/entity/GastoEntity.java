@@ -52,6 +52,7 @@ public class GastoEntity {
 	
 	@ManyToOne
 	private CategoriaEntity categoria;
+
 	
 	
 //	 @ManyToOne
@@ -123,6 +124,9 @@ public class GastoEntity {
 	public void setTipo(Tipo tipo) {
 		this.tipo = tipo;
 	}
+	
+	
+
 
 	@Override
 	public int hashCode() {
