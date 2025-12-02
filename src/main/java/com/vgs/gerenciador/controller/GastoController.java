@@ -19,6 +19,7 @@ import com.vgs.gerenciador.DTO.DashboardDTO;
 import com.vgs.gerenciador.DTO.EntradaDTO;
 import com.vgs.gerenciador.DTO.FiltraDataDTO;
 import com.vgs.gerenciador.DTO.GastoDTO;
+import com.vgs.gerenciador.DTO.SaidaDTO;
 import com.vgs.gerenciador.service.GastoService;
 
 @RestController
@@ -53,6 +54,10 @@ public class GastoController {
 		return gasto.entradasDash();
 	}
 	
+	@GetMapping("/saidas")
+	public SaidaDTO getSaida() {
+		return gasto.saidaDash();
+	}
 
 
 

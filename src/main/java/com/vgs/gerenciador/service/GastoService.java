@@ -23,6 +23,7 @@ import com.vgs.gerenciador.DTO.DashboardDTO;
 import com.vgs.gerenciador.DTO.EntradaDTO;
 import com.vgs.gerenciador.DTO.FiltraDataDTO;
 import com.vgs.gerenciador.DTO.GastoDTO;
+import com.vgs.gerenciador.DTO.SaidaDTO;
 import com.vgs.gerenciador.repository.CategoriaRepository;
 import com.vgs.gerenciador.repository.GastoRepository;
 
@@ -55,7 +56,7 @@ public class GastoService {
 	    gasto.setTipo(dto.getTipo());
 	    gasto.setForma(dto.getForma());
 
-	    // pegar categoria correta do banco
+	    // valida se existe a categoria, if(null) nao encontrada
 	    if (dto.getCategoriaId() != null) {
 	        CategoriaEntity categoria = categoriaRepository.findById(dto.getCategoriaId())
 	                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
@@ -209,14 +210,18 @@ public class GastoService {
         		}
         }
         
+        
+        //grid para entradas
         for(GastoDTO entradas : todosGastos) {
         		if(entradas.getTipo() == Tipo.ENTRADA) {
         			todasEntradas.add(entradas);
         		}
         }
         
+        
+        //pega o mes com maior entrada
         Map<Object, BigDecimal> maiorMes = todosGastos.stream()
-        		.filter(g -> g.getTipo() == Tipo.SAIDA)
+        		.filter(g -> g.getTipo() == Tipo.ENTRADA)
         .collect(Collectors.groupingBy(g -> g.getData().getMonth(), 
         		Collectors.reducing(BigDecimal.ZERO, GastoDTO::getValor, BigDecimal::add)
         		));
@@ -227,6 +232,43 @@ public class GastoService {
 		
 	}
 	
+	public SaidaDTO saidaDash() {
+		
+		List<GastoDTO> todosGastos = listarTodos(); 
+		BigDecimal totalSaidas = BigDecimal.ZERO;
+		List<Object> todasSaidas = new ArrayList();
+		List<BigDecimal> totaisPorMes = new ArrayList<>(Collections.nCopies(12, BigDecimal.ZERO));
+		
+		
+		//grid para entradas e valor total saidas
+		 for(GastoDTO saidas : todosGastos) {
+     		if(saidas.getTipo() == Tipo.SAIDA) {
+     			todasSaidas.add(saidas);
+     			totalSaidas = totalSaidas.add(saidas.getValor());
+     		}
+     }
+		
+		//pega o mes com mais gasto
+		Map<Object, BigDecimal> maiorMes = todosGastos.stream()
+        		.filter(g -> g.getTipo() == Tipo.SAIDA)
+        .collect(Collectors.groupingBy(g -> g.getData().getMonth(), 
+        		Collectors.reducing(BigDecimal.ZERO, GastoDTO::getValor, BigDecimal::add)
+        		));
+		
+		//pega as saidas por mes
+        for (int mes = 1; mes <= 12; mes++) {
+        	 final int mesFiltro = mes;
+            BigDecimal total = todosGastos.stream()
+                .filter(g -> g.getData().getMonthValue() == mesFiltro && g.getTipo() == Tipo.SAIDA)
+                .map(GastoDTO::getValor)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+            
+            totaisPorMes.set(mes - 1, total); //menos um pq vetor ta um a frente
+        }
+		
+		return new SaidaDTO (totalSaidas, totaisPorMes, maiorMes,  todasSaidas) ;
+		
+	}
 	
 
 	
