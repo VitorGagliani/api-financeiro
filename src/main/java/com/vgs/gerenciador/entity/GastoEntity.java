@@ -55,9 +55,7 @@ public class GastoEntity {
 
 	
 	
-//	 @ManyToOne
-//	    @JoinColumn(name = "categoria_id", nullable = false) // ✔ obrigatório
-//	private Categoria categoria;
+
 	
 	public GastoEntity(GastoDTO gasto) {
 		BeanUtils.copyProperties(gasto, this);
