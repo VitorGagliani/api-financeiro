@@ -55,15 +55,7 @@ public class GastoService {
 	    gasto.setData(dto.getData());
 	    gasto.setTipo(dto.getTipo());
 	    gasto.setForma(dto.getForma());
-
-	    // valida se existe a categoria, if(null) nao encontrada
-	    if (dto.getCategoriaId() != null) {
-	        CategoriaEntity categoria = categoriaRepository.findById(dto.getCategoriaId())
-	                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
-	        gasto.setCategoria(categoria);
-	    } else {
-	        gasto.setCategoria(null);
-	    }
+		gasto.setCategoria(dto.getCategoriaId());
 
 	    gastoRespository.save(gasto);
 
